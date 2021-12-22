@@ -1,0 +1,14 @@
+{
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "compilerOptions": {
+    "target": "esnext",
+    "declaration": false,
+    "paths": {
+      "~/*": ["./src/*"]
+    },
+    "lib": ["dom"]
+  },
+  "include": [
+    "src"
+  ]
+}

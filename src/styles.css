@@ -1,0 +1,4 @@
+html {
+  min-width: 550px;
+  overflow-x: hidden; /* Required to hide horizontal scroll on Firefox */
+}
