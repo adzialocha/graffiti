@@ -15,7 +15,7 @@ function getPath(...args: Array<string>): string {
 const config: Configuration = {
   entry: {
     background: getPath(DIR_SRC, 'background'),
-    index: getPath(DIR_SRC, 'index'),
+    'content-script': getPath(DIR_SRC, 'content-script'),
   },
   output: {
     path: getPath(DIR_DIST),
