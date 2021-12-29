@@ -6,10 +6,18 @@
   "icons": {
     "128": "icon.png"
   },
+  "permissions": [
+    "activeTab"
+  ],
+  "browser_action": {
+    "default_icon": "icon-32.png",
+    "default_title": "Graffiti",
+    "default_popup": "popup.html",
+    "browser_style": true
+  },
   "background": {
     "persistent": false,
     "scripts": [
-      "browser-polyfill.min.js",
       "background.js"
     ]
   },
@@ -17,7 +25,6 @@
     {
       "matches": ["*://*/*"],
       "js": [
-        "browser-polyfill.min.js",
         "content-script.js"
       ]
     }

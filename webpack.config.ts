@@ -1,6 +1,7 @@
 import * as path from 'path';
 
 import CopyPlugin from 'copy-webpack-plugin';
+import HtmlPlugin from 'html-webpack-plugin';
 import WebExtPlugin from 'web-ext-plugin';
 
 import type { Configuration } from 'webpack';
@@ -14,8 +15,9 @@ function getPath(...args: Array<string>): string {
 
 const config: Configuration = {
   entry: {
-    background: getPath(DIR_SRC, 'background'),
     'content-script': getPath(DIR_SRC, 'content-script'),
+    background: getPath(DIR_SRC, 'background'),
+    popup: getPath(DIR_SRC, 'popup'),
   },
   output: {
     path: getPath(DIR_DIST),
@@ -40,11 +42,8 @@ const config: Configuration = {
     new CopyPlugin({
       patterns: [
         {
-          from: '**/*',
+          from: '**/*.{png,json}',
           context: DIR_SRC,
-          globOptions: {
-            ignore: ['*.ts'],
-          },
         },
         {
           from: getPath(
@@ -55,6 +54,11 @@ const config: Configuration = {
           ),
         },
       ],
+    }),
+    new HtmlPlugin({
+      template: getPath(DIR_SRC, 'popup.html'),
+      filename: 'popup.html',
+      chunks: ['popup'],
     }),
     new WebExtPlugin({ sourceDir: getPath(DIR_DIST) }),
   ],
