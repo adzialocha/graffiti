@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill';
+import { finder as getCssSelector } from '@medv/finder';
 
 import { MessageTypeContent } from '~/types';
 
@@ -21,6 +22,13 @@ function hover(event: Event) {
   editor.style.left = `${window.scrollX + x}px`;
   editor.style.width = `${width}px`;
   editor.style.height = `${height}px`;
+
+  const selector = getCssSelector(target, {
+    // Use high values to disable optimizations, we actually want the full and
+    // not shortened one to keep the knowledge about "where" the element sits.
+    seedMinLength: 1000,
+    optimizedMinLength: 1000,
+  });
 }
 
 function show() {
