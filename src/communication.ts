@@ -1,8 +1,14 @@
 import browser from 'webextension-polyfill';
 
-import type { MessageContent } from '~/types';
+import type {
+  BackgroundMessage,
+  ContentScriptMessage,
+  PopupMessage,
+} from '~/types.d';
 
-export async function sendToBackground(message: MessageContent) {
+async function sendMessage(
+  message: BackgroundMessage | PopupMessage | ContentScriptMessage,
+) {
   try {
     return await browser.runtime.sendMessage(message);
   } catch (error) {
@@ -11,7 +17,17 @@ export async function sendToBackground(message: MessageContent) {
   }
 }
 
-export async function sendToContentScript(message: MessageContent) {
+export async function sendToPopup(message: BackgroundMessage) {
+  return await sendMessage(message);
+}
+
+export async function sendToBackground(
+  message: PopupMessage | ContentScriptMessage,
+) {
+  return await sendMessage(message);
+}
+
+export async function sendToContentScript(message: BackgroundMessage) {
   try {
     const tabs = await browser.tabs.query({
       active: true,

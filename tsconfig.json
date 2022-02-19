@@ -2,13 +2,16 @@
   "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
     "target": "esnext",
-    "declaration": false,
     "paths": {
       "~/*": ["./src/*"]
     },
+    "declaration": false,
+    "resolveJsonModule": true,
     "lib": ["dom"]
   },
   "include": [
-    "src"
+    ".",
+    "src/**/*",
+    "tests/**/*"
   ]
 }

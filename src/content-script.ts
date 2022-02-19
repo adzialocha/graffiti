@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill';
 import { finder as getCssSelector } from '@medv/finder';
 
-import { MessageTypeContent } from '~/types';
+import type { BackgroundState, BackgroundMessage } from '~/types.d';
 
 const editor = document.createElement('div');
 editor.style.border = '5px solid red';
@@ -29,6 +29,8 @@ function hover(event: Event) {
     seedMinLength: 1000,
     optimizedMinLength: 1000,
   });
+
+  console.log(selector);
 }
 
 function show() {
@@ -41,9 +43,9 @@ function hide() {
   editor.style.display = 'none';
 }
 
-browser.runtime.onMessage.addListener((message) => {
-  if (message.type === MessageTypeContent.ContentTest) {
-    if (message.active) {
+browser.runtime.onMessage.addListener((message: BackgroundMessage) => {
+  if (message.type === 'background/state') {
+    if ((message as BackgroundState).editMode) {
       show();
     } else {
       hide();
