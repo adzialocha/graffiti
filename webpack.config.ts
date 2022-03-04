@@ -24,7 +24,7 @@ const config: Configuration = {
     filename: '[name].js',
   },
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.tsx', '.js'],
     alias: {
       '~': getPath(DIR_SRC),
     },
@@ -32,7 +32,7 @@ const config: Configuration = {
   module: {
     rules: [
       {
-        test: /\.ts$/,
+        test: /\.tsx?$/,
         exclude: /node_modules/,
         loader: 'ts-loader',
       },

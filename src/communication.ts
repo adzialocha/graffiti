@@ -30,8 +30,7 @@ export async function sendToBackground(
 export async function sendToContentScript(message: BackgroundMessage) {
   try {
     const tabs = await browser.tabs.query({
-      active: true,
-      currentWindow: true,
+      status: 'complete',
     });
 
     const promises = tabs.map((tab) => {
