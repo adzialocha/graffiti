@@ -37,7 +37,7 @@ const overlayStyles = css`
   user-select: none;
 `;
 
-const colorWheel = keyframes`
+const colorKeyframes = keyframes`
   0% {
     filter: hue-rotate(0deg);
   }
@@ -45,7 +45,17 @@ const colorWheel = keyframes`
   100% {
     filter: hue-rotate(360deg);
   }
-`
+`;
+
+const selectorStyles = css`
+  position: absolute;
+  z-index: 9999999;
+  pointer-events: none;
+  user-select: none;
+  background: rgba(0, 0, 255, 0.5);
+  border-radius: 10px;
+  animation: ${colorKeyframes} 10s linear infinite alternate;
+`;
 
 const Selector: React.FunctionComponent = () => {
   const [coordinates, setCoordinates] = useState({
@@ -69,7 +79,7 @@ const Selector: React.FunctionComponent = () => {
           y,
           width,
           height,
-        }
+        };
       });
     };
 
@@ -96,19 +106,17 @@ const Selector: React.FunctionComponent = () => {
     };
   }, []);
 
-  return <div css={css`
-    position: absolute;
-    z-index: 9999999;
-    pointer-events: none;
-    user-select: none;
-    background: rgba(0, 0, 255, 0.5);
-    border-radius: 10px;
-    left: ${window.scrollX + coordinates.x}px;
-    top: ${window.scrollY + coordinates.y}px;
-    width: ${coordinates.width}px;
-    height: ${coordinates.height}px;
-    animation: ${colorWheel} 10s linear infinite alternate;
-  `} />;
+  return (
+    <div
+      css={css`
+        ${selectorStyles}
+        left: ${window.scrollX + coordinates.x}px;
+        top: ${window.scrollY + coordinates.y}px;
+        width: ${coordinates.width}px;
+        height: ${coordinates.height}px;
+      `}
+    />
+  );
 };
 
 const Overlay: React.FunctionComponent = () => {
