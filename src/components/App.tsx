@@ -3,7 +3,9 @@ import ShadowDOMRoot from 'react-shadow/emotion';
 import emotionReset from 'emotion-reset';
 import { Global, css } from '@emotion/react';
 
+import ContextProvider from '~/components/ContextProvider';
 import Editor from '~/components/Editor';
+import Runtime from '~/components/Runtime';
 
 const globalStyles = css`
   ${emotionReset}
@@ -26,7 +28,10 @@ const App: React.FunctionComponent = () => {
   return (
     <ShadowDOMRoot.div css={rootStyles}>
       <Global styles={globalStyles} />
-      <Editor />
+      <ContextProvider>
+        <Runtime />
+        <Editor />
+      </ContextProvider>
     </ShadowDOMRoot.div>
   );
 };

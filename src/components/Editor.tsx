@@ -1,24 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 
 import Overlay from '~/components/Overlay';
 import Selector from '~/components/Selector';
-
-import type { BackgroundState, BackgroundMessage } from '~/types.d';
+import { Context } from '~/components/ContextProvider';
 
 const Editor: React.FunctionComponent = () => {
-  const [active, setActive] = useState(false);
-
-  useEffect(() => {
-    browser.runtime.onMessage.addListener((message: BackgroundMessage) => {
-      if (message.type === 'background/state') {
-        if ((message as BackgroundState).editMode) {
-          setActive(true);
-        } else {
-          setActive(false);
-        }
-      }
-    });
-  }, []);
+  const { active } = useContext(Context);
 
   return active ? (
     <>
