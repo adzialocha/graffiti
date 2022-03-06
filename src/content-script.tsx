@@ -11,8 +11,6 @@ import type { BackgroundState, BackgroundMessage } from '~/types.d';
 const globalStyles = css`
   ${emotionReset}
 
-  all: initial;
-
   *,
   *::after,
   *::before {
@@ -21,8 +19,10 @@ const globalStyles = css`
     -webkit-font-smoothing: antialiased;
     font-smoothing: antialiased;
   }
+`;
 
-  font-family: Arial, sans-serif;
+const rootStyles = css`
+  all: initial;
 `;
 
 const overlayStyles = css`
@@ -120,7 +120,11 @@ const Selector: React.FunctionComponent = () => {
 };
 
 const Overlay: React.FunctionComponent = () => {
-  return <div css={overlayStyles} />;
+  return (
+    <div css={overlayStyles}>
+      <h1>Hello, World</h1>
+    </div>
+  );
 };
 
 const Editor: React.FunctionComponent = () => {
@@ -148,7 +152,7 @@ const Editor: React.FunctionComponent = () => {
 
 const App: React.FunctionComponent = () => {
   return (
-    <ShadowDOMRoot.div css={globalStyles}>
+    <ShadowDOMRoot.div css={rootStyles}>
       <Global styles={globalStyles} />
       <Editor />
     </ShadowDOMRoot.div>
