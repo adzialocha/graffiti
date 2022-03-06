@@ -4,6 +4,7 @@ import type React from 'react';
 
 interface IContextValues {
   active: boolean;
+  target: HTMLElement | undefined;
 }
 
 interface IContext extends IContextValues {
@@ -14,8 +15,9 @@ type Props = {
   children?: React.ReactNode;
 };
 
-const initialState = {
+const initialState: IContextValues = {
   active: false,
+  target: undefined,
 };
 
 export const Context = createContext<IContext>({

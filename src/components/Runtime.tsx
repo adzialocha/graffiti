@@ -17,6 +17,7 @@ const Runtime: React.FunctionComponent = () => {
         } else {
           setState({
             active: false,
+            target: undefined,
           });
         }
       }
