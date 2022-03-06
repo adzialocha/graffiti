@@ -1,6 +1,7 @@
 {
   "parser": "@typescript-eslint/parser",
   "extends": [
+    "plugin:react-hooks/recommended",
     // Applies the recommended rules from @typescript-eslint/eslint-plugin
     "plugin:@typescript-eslint/recommended",
     // Keep prettier last to make sure its style changes are not overwritten by
