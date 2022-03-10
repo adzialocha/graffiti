@@ -3,7 +3,10 @@ import { createContext, useState, useMemo } from 'react';
 import type React from 'react';
 
 interface IContextValues {
+  // State of the editor
   active: boolean;
+
+  // Currently selected DOM element
   target: HTMLElement | undefined;
 }
 
@@ -40,8 +43,6 @@ const ContextProvider = ({ children }: Props) => {
           ...state,
           ...newState,
         });
-
-        return;
       },
     };
   }, [state]);
