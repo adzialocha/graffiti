@@ -23,8 +23,7 @@ const initialState: IContextValues = {
 export const Context = createContext<IContext>({
   ...initialState,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setState: (newState: Partial<IContextValues>) => {
-    // This is not doing anything (yet)
+  setState: () => {
     return;
   },
 });
