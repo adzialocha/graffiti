@@ -5,7 +5,7 @@
   "scripts": {
     "build": "run-s clean webpack:production",
     "clean": "rimraf ./build",
-    "start": "run-s build",
+    "start": "run-s watch",
     "lint": "eslint --ext .ts --ext .tsx .",
     "test": "jest",
     "watch": "run-s clean webpack:development",
