@@ -1,8 +1,18 @@
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { css, keyframes } from '@emotion/react';
 import { finder as getCssSelector } from '@medv/finder';
+import debounce from 'debounce';
 
+import Spraycan from '~/components/Spraycan';
 import { Context } from '~/components/ContextProvider';
+
+const DEBOUNCE_WAIT = 25; // ms
 
 // If a clicked target is too close to the top or right side of the page, the
 // toolbar will move to another position to stay visible to the user.
@@ -18,8 +28,6 @@ const colorKeyframes = keyframes`
   }
 `;
 
-const selectorBorder = 0;
-
 const transparency = 0.5;
 
 const selectorStyles = css`
@@ -34,6 +42,7 @@ const selectorStyles = css`
   );
   border-radius: 10px;
   animation: ${colorKeyframes} 5s linear infinite alternate;
+  transition: all 50ms ease-in-out;
 `;
 
 const selectorToolbarStyles = css`
@@ -93,8 +102,12 @@ const Selector: React.FunctionComponent = () => {
     width: 0,
     height: 0,
   });
+  const [scrollPosition, setScrollPosition] = useState({
+    x: 0,
+    y: 0,
+  });
 
-  const onReset = () => {
+  const reset = useCallback(() => {
     setState({
       target: undefined,
     });
@@ -105,7 +118,7 @@ const Selector: React.FunctionComponent = () => {
       width: 0,
       height: 0,
     });
-  };
+  }, [setState]);
 
   useEffect(() => {
     const onMouseMove = (event: Event) => {
@@ -144,6 +157,19 @@ const Selector: React.FunctionComponent = () => {
       });
     };
 
+    const onScroll = () => {
+      if (target) {
+        reset();
+      }
+
+      setScrollPosition(() => {
+        return {
+          x: window.scrollX,
+          y: window.scrollY,
+        };
+      });
+    };
+
     const onClick = (event: Event) => {
       if (target) {
         // Do not select anything new if we already have something
@@ -176,33 +202,43 @@ const Selector: React.FunctionComponent = () => {
       console.log(selector);
     };
 
+    const debouncedOnResize = debounce(onResize, DEBOUNCE_WAIT);
+    const debouncedOnScroll = debounce(onScroll, DEBOUNCE_WAIT);
+
     window.addEventListener('mousemove', onMouseMove, { capture: true });
     window.addEventListener('click', onClick, { capture: true });
-    window.addEventListener('resize', onResize);
-    window.addEventListener('scroll', onResize);
+    window.addEventListener('resize', debouncedOnResize);
+    document.addEventListener('scroll', debouncedOnScroll, { capture: true });
 
     return () => {
       window.removeEventListener('mousemove', onMouseMove, { capture: true });
       window.removeEventListener('click', onClick, { capture: true });
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('scroll', onResize);
+      window.removeEventListener('resize', debouncedOnResize);
+      document.removeEventListener('scroll', debouncedOnScroll, {
+        capture: true,
+      });
     };
-  }, [target, setState]);
+  }, [target, setState, reset]);
+
+  // Set true when selector is larger than zero
+  const active = coordinates.width && coordinates.height;
 
   return (
     <div
       css={css`
         ${selectorStyles}
-        left: ${window.scrollX + coordinates.x - selectorBorder}px;
-        top: ${window.scrollY + coordinates.y - selectorBorder}px;
-        width: ${coordinates.width + selectorBorder * 2}px;
-        height: ${coordinates.height + selectorBorder * 2}px;
+        display: ${active ? 'block' : 'none'};
+        left: ${scrollPosition.x + coordinates.x}px;
+        top: ${scrollPosition.y + coordinates.y}px;
+        width: ${coordinates.width}px;
+        height: ${coordinates.height}px;
       `}
     >
+      {active && <Spraycan />}
       {target ? (
         <SelectorToolbar
           ref={toolbarRef}
-          onReset={onReset}
+          onReset={reset}
           bottom={coordinates.y < TOOLBAR_THRESHOLD}
           inside={coordinates.height > TOOLBAR_THRESHOLD}
           left={coordinates.x > window.innerWidth - TOOLBAR_THRESHOLD}

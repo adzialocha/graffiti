@@ -42,7 +42,7 @@ const config: Configuration = {
     new CopyPlugin({
       patterns: [
         {
-          from: '**/*.{png,json}',
+          from: '**/*.{png,json,webm}',
           context: DIR_SRC,
         },
         {

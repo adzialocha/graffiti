@@ -11,6 +11,7 @@ const overlayStyles = css`
   background: rgba(0, 0, 0, 0.7);
   pointer-events: none;
   user-select: none;
+  cursor: crosshair;
 `;
 
 const Overlay: React.FunctionComponent = () => {
