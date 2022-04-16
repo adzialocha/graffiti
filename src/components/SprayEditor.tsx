@@ -27,7 +27,15 @@ const SprayEditor = () => {
   function handlePointerDown(event: React.PointerEvent) {
     const target = event.target as HTMLElement;
     target.setPointerCapture(event.pointerId);
-    setPoints([[event.pageX, event.pageY, event.pressure]]);
+    const { x, y } = target.getBoundingClientRect();
+
+    setPoints([
+      [
+        event.pageX - x - window.scrollX,
+        event.pageY - y - window.scrollY,
+        event.pressure,
+      ],
+    ]);
   }
 
   function handlePointerMove(event: React.PointerEvent) {
@@ -35,7 +43,16 @@ const SprayEditor = () => {
       return;
     }
 
-    setPoints([...points, [event.pageX, event.pageY, event.pressure]]);
+    const target = event.target as HTMLElement;
+    const { x, y } = target.getBoundingClientRect();
+
+    const point = [
+      event.pageX - x - window.scrollX,
+      event.pageY - y - window.scrollY,
+      event.pressure,
+    ];
+
+    setPoints([...points, point]);
   }
 
   const stroke = getStroke(points, {
