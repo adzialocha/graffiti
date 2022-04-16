@@ -51,6 +51,8 @@ const selectorToolbarStyles = css`
   width: 150px;
 `;
 
+type SelectorMode = 'paint' | 'music' | undefined;
+
 type ToolbarProps = {
   // Show toolbar underneath target
   bottom: boolean;
@@ -61,12 +63,18 @@ type ToolbarProps = {
   // Show toolbar left of target
   left: boolean;
 
+  // Callback for mode selection
+  onSelect: (mode: SelectorMode) => void;
+
+  // Currently selected mode
+  mode: SelectorMode;
+
   // Reset selected target
   onReset: () => void;
 };
 
 const SelectorToolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
-  ({ onReset, left, bottom, inside }, ref) => {
+  ({ onReset, onSelect, mode, left, bottom, inside }, ref) => {
     // Move toolbar when element is too close to the border of the page
     const positionX = left ? 'right: 100%;' : null;
     let positionY = 'top: -30px;';
@@ -75,6 +83,14 @@ const SelectorToolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
     } else if (bottom) {
       positionY = 'bottom: -30px;';
     }
+
+    const onPaint = () => {
+      onSelect('paint');
+    };
+
+    const onMusic = () => {
+      onSelect('music');
+    };
 
     return (
       <div
@@ -85,15 +101,25 @@ const SelectorToolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
         `}
         ref={ref}
       >
-        <button>Paint</button>
-        <button>Music</button>
+        <button disabled={mode === 'paint'} onClick={onPaint}>
+          Paint
+        </button>
+        <button disabled={mode === 'music'} onClick={onMusic}>
+          Music
+        </button>
         <button onClick={onReset}>Return</button>
       </div>
     );
   },
 );
 
-const Selector: React.FunctionComponent = () => {
+type SelectorProps = {
+  children?: React.ReactNode;
+  onSelect: (mode: SelectorMode) => void;
+  mode: SelectorMode;
+};
+
+const Selector = ({ children, onSelect, mode }: SelectorProps) => {
   const { target, setState } = useContext(Context);
   const toolbarRef = useRef<HTMLDivElement>(null);
   const [coordinates, setCoordinates] = useState({
@@ -112,13 +138,15 @@ const Selector: React.FunctionComponent = () => {
       target: undefined,
     });
 
+    onSelect(undefined);
+
     setCoordinates({
       x: 0,
       y: 0,
       width: 0,
       height: 0,
     });
-  }, [setState]);
+  }, [setState, onSelect]);
 
   useEffect(() => {
     const onMouseMove = (event: Event) => {
@@ -239,11 +267,14 @@ const Selector: React.FunctionComponent = () => {
         <SelectorToolbar
           ref={toolbarRef}
           onReset={reset}
+          onSelect={onSelect}
+          mode={mode}
           bottom={coordinates.y < TOOLBAR_THRESHOLD}
           inside={coordinates.height > TOOLBAR_THRESHOLD}
           left={coordinates.x > window.innerWidth - TOOLBAR_THRESHOLD}
         />
       ) : null}
+      {children}
     </div>
   );
 };
