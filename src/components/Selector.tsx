@@ -51,7 +51,7 @@ const selectorToolbarStyles = css`
   width: 150px;
 `;
 
-type SelectorMode = 'paint' | 'music' | undefined;
+type SelectorMode = 'spray' | 'music' | undefined;
 
 type ToolbarProps = {
   // Show toolbar underneath target
@@ -84,8 +84,8 @@ const SelectorToolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
       positionY = 'bottom: -30px;';
     }
 
-    const onPaint = () => {
-      onSelect('paint');
+    const onSpray = () => {
+      onSelect('spray');
     };
 
     const onMusic = () => {
@@ -101,8 +101,8 @@ const SelectorToolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
         `}
         ref={ref}
       >
-        <button disabled={mode === 'paint'} onClick={onPaint}>
-          Paint
+        <button disabled={mode === 'spray'} onClick={onSpray}>
+          Spray
         </button>
         <button disabled={mode === 'music'} onClick={onMusic}>
           Music
