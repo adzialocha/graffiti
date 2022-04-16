@@ -48,25 +48,18 @@ const SprayEditor = () => {
   const pathData = getSvgPathFromStroke(stroke);
 
   return (
-    <div
+    <svg
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
       css={css`
         pointer-events: all;
+        touch-action: none;
         width: 100%;
         height: 100%;
       `}
     >
-      <svg
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        css={css`
-          touch-action: none;
-          width: 100%;
-          height: 100%;
-        `}
-      >
-        {points && <path d={pathData} />}
-      </svg>
-    </div>
+      {points && <path d={pathData} />}
+    </svg>
   );
 };
 
