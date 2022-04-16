@@ -148,6 +148,30 @@ const Selector = ({ children, onSelect, mode }: SelectorProps) => {
     });
   }, [setState, onSelect]);
 
+  const recalculate = useCallback(() => {
+    if (!target) {
+      return;
+    }
+
+    const { x, y, width, height } = target.getBoundingClientRect();
+
+    setCoordinates(() => {
+      return {
+        x,
+        y,
+        width,
+        height,
+      };
+    });
+
+    setScrollPosition(() => {
+      return {
+        x: window.scrollX,
+        y: window.scrollY,
+      };
+    });
+  }, [target]);
+
   useEffect(() => {
     const onMouseMove = (event: Event) => {
       if (target) {
@@ -173,29 +197,15 @@ const Selector = ({ children, onSelect, mode }: SelectorProps) => {
         return;
       }
 
-      const { x, y, width, height } = target.getBoundingClientRect();
-
-      setCoordinates(() => {
-        return {
-          x,
-          y,
-          width,
-          height,
-        };
-      });
+      recalculate();
     };
 
     const onScroll = () => {
-      if (target) {
-        reset();
+      if (!target) {
+        return;
       }
 
-      setScrollPosition(() => {
-        return {
-          x: window.scrollX,
-          y: window.scrollY,
-        };
-      });
+      recalculate();
     };
 
     const onClick = (event: Event) => {
@@ -209,10 +219,6 @@ const Selector = ({ children, onSelect, mode }: SelectorProps) => {
       }
 
       const newTarget = event.target as HTMLElement;
-
-      setState({
-        target: newTarget,
-      });
 
       const selector = getCssSelector(newTarget, {
         // @TODO: Find good values
@@ -246,7 +252,7 @@ const Selector = ({ children, onSelect, mode }: SelectorProps) => {
         capture: true,
       });
     };
-  }, [target, setState, reset]);
+  }, [target, recalculate, setState, reset]);
 
   // Set true when selector is larger than zero
   const active = coordinates.width && coordinates.height;
