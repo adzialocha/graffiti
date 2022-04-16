@@ -50,6 +50,7 @@ export type BackgroundMessage = BackgroundState;
 export type BackgroundState = {
   type: 'background/state';
   editMode: boolean;
+  pageLoaded: boolean;
   active: boolean;
 };
 

@@ -22,7 +22,8 @@ function sendCurrentState() {
 
 browser.runtime.onMessage.addListener((message: BackgroundMessage) => {
   if (message.type === 'background/state') {
-    const { editMode } = message as BackgroundState;
+    const { editMode, pageLoaded } = message as BackgroundState;
+    (elements.editMode as HTMLInputElement).disabled = !pageLoaded;
     (elements.editMode as HTMLInputElement).checked = editMode;
   }
 });

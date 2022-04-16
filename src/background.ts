@@ -15,12 +15,14 @@ const manager = new TaskManager();
 
 const active = false;
 let editMode = false;
+let pageLoaded = false;
 
 function sendCurrentState() {
   const message = {
     type: 'background/state',
     active,
     editMode,
+    pageLoaded,
   } as BackgroundState;
 
   sendToPopup(message);
@@ -46,12 +48,16 @@ function onMessageReceived(message: PopupMessage | ContentScriptMessage) {
 }
 
 function onActiveTabChanged() {
-  disableEditMode();
+  editMode = false;
+  sendCurrentState();
 }
 
 function onUrlChanged(tabId: number, url: string) {
   console.log('onUrlChanged', { tabId, url });
-  disableEditMode();
+
+  editMode = false;
+  pageLoaded = false;
+  sendCurrentState();
 
   manager.clear(tabId);
   manager.add(tabId, async () => {
@@ -64,6 +70,8 @@ function onPageLoaded(tabId: number, url: string) {
 
   manager.finish(tabId, async () => {
     // @TODO: Apply graffiti to page
+    pageLoaded = true;
+    sendCurrentState();
   });
 }
 

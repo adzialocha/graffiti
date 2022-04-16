@@ -220,6 +220,10 @@ const Selector = ({ children, onSelect, mode }: SelectorProps) => {
 
       const newTarget = event.target as HTMLElement;
 
+      setState({
+        target: newTarget,
+      });
+
       const selector = getCssSelector(newTarget, {
         // @TODO: Find good values
         //
