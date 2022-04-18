@@ -16,15 +16,15 @@ const elements = {
 function sendCurrentState() {
   sendToBackground({
     type: 'popup/state',
-    editMode: (elements.editMode as HTMLInputElement).checked,
+    edit: (elements.editMode as HTMLInputElement).checked,
   } as PopupState);
 }
 
 browser.runtime.onMessage.addListener((message: BackgroundMessage) => {
   if (message.type === 'background/state') {
-    const { editMode, pageLoaded } = message as BackgroundState;
-    (elements.editMode as HTMLInputElement).disabled = !pageLoaded;
-    (elements.editMode as HTMLInputElement).checked = editMode;
+    const { edit, ready } = message as BackgroundState;
+    (elements.editMode as HTMLInputElement).disabled = !ready;
+    (elements.editMode as HTMLInputElement).checked = edit;
   }
 });
 

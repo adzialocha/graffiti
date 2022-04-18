@@ -10,7 +10,7 @@ const Runtime: React.FunctionComponent = () => {
   useEffect(() => {
     const onMessage = (message: BackgroundMessage) => {
       if (message.type === 'background/state') {
-        if ((message as BackgroundState).editMode) {
+        if ((message as BackgroundState).edit) {
           setState({
             active: true,
           });

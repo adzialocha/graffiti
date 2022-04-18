@@ -12,7 +12,7 @@ async function sendMessage(
   try {
     return await browser.runtime.sendMessage(message);
   } catch (error) {
-    console.error('Sending message to popup failed', error);
+    console.error('Sending message failed', error);
     return null;
   }
 }
@@ -30,7 +30,7 @@ export async function sendToBackground(
 export async function sendToContentScript(message: BackgroundMessage) {
   try {
     const tabs = await browser.tabs.query({
-      status: 'complete',
+      active: true,
     });
 
     const promises = tabs.map((tab) => {

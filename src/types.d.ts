@@ -38,7 +38,7 @@ export type PopupMessage = PopupState | PopupOpen;
 
 export type PopupState = {
   type: 'popup/state';
-  editMode: boolean;
+  edit: boolean;
 };
 
 export type PopupOpen = {
@@ -47,12 +47,14 @@ export type PopupOpen = {
 
 export type BackgroundMessage = BackgroundState;
 
+export type State = {
+  edit: boolean;
+  ready: boolean;
+};
+
 export type BackgroundState = {
   type: 'background/state';
-  editMode: boolean;
-  pageLoaded: boolean;
-  active: boolean;
-};
+} & State;
 
 export type ContentScriptMessage = Test;
 
