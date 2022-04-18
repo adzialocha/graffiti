@@ -29,9 +29,7 @@ export async function sendToBackground(
 
 export async function sendToContentScript(message: BackgroundMessage) {
   try {
-    const tabs = await browser.tabs.query({
-      active: true,
-    });
+    const tabs = await browser.tabs.query({});
 
     const promises = tabs.map((tab) => {
       if (tab.id === undefined) {
