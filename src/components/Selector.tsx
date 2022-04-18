@@ -272,7 +272,7 @@ const Selector = ({ children, onSelect, mode }: SelectorProps) => {
         height: ${coordinates.height}px;
       `}
     >
-      {active && <Spraycan />}
+      {active && !mode && <Spraycan />}
       {target ? (
         <SelectorToolbar
           ref={toolbarRef}
