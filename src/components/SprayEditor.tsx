@@ -34,6 +34,7 @@ const SprayEditor = ({ onChange }: Props) => {
     onChange(points);
   }, [points, onChange]);
 
+  // @TODO: Do not reset everything on mouse down
   function handlePointerDown(event: React.PointerEvent) {
     const target = event.target as HTMLElement;
     target.setPointerCapture(event.pointerId);
