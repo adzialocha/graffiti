@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { getStroke } from 'perfect-freehand';
 import { css } from '@emotion/react';
 
-export type Points = number[][];
+import type { Points } from '~/types.d';
 
 type Props = {
   onChange: (points: Points) => void;

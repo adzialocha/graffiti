@@ -2,13 +2,14 @@ import browser from 'webextension-polyfill';
 import { createMachine, interpret, reduce, state, transition } from 'robot3';
 
 import { sendToPopup, sendToContentScript } from '~/communication';
-import { Storage, TaskManager } from '~/graffiti';
+import { Storage, TaskManager, normalizeUrl } from '~/graffiti';
 
 import type {
   BackgroundState,
   ContentScriptMessage,
   PopupMessage,
   PopupState,
+  Save,
   State,
 } from '~/types.d';
 
@@ -17,7 +18,6 @@ const manager = new TaskManager();
 
 type Args = {
   tabId: number;
-  url?: string;
 };
 
 const initialContext: State = {
@@ -98,18 +98,22 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, { url }) => {
   if ('url' in changeInfo) {
     // The url of this tab has changed, the website content is loading and
     // parallely we start fetching the graffiti data from the server ..
-    service.send({ type: 'tab-loading', tabId, url });
+    service.send({ type: 'tab-loading', tabId });
     manager.clear(tabId);
     manager.add(tabId, async () => {
       // @TODO: Make request to server to get latest graffiti
     });
   }
 
+  // @TODO: Make sure data is also loaded when tab was just changed
   if (changeInfo.status === 'complete') {
     // Website content has loaded, check if we also have the graffiti data ...
     manager.finish(tabId, async () => {
+      const data = storage.getUrl(normalizeUrl(url));
+      console.log(data);
+
       // @TODO: Apply graffiti to page
-      service.send({ type: 'tab-complete' });
+      service.send({ type: 'tab-complete', tabId });
     });
   }
 });
@@ -128,14 +132,12 @@ browser.tabs.onActivated.addListener(async ({ tabId, windowId }) => {
 });
 
 browser.runtime.onMessage.addListener(
-  (message: PopupMessage | ContentScriptMessage) => {
+  (message: PopupMessage | ContentScriptMessage, { url }) => {
     if (message.type === 'popup/open') {
       // The user opened the browser extension popup menu. We want to inform
       // the popup directly about the latest state.
       broadcastCurrentState();
-    }
-
-    if (message.type === 'popup/state') {
+    } else if (message.type === 'popup/state') {
       if ((message as PopupState).edit) {
         // The user activated edit mode
         service.send({ type: 'edit-mode-enable' });
@@ -143,6 +145,26 @@ browser.runtime.onMessage.addListener(
         // The user deactivated edit mode
         service.send({ type: 'edit-mode-disable' });
       }
+    } else if (message.type === 'content-script/save') {
+      if (!url) {
+        return;
+      }
+
+      const { selector, path } = message as Save;
+
+      // @TODO: Use real values here from p2panda
+      const id = Math.random().toString();
+      const author = Math.random().toString();
+      const version = '0.1.0';
+
+      storage.set(normalizeUrl(url), id, {
+        mode: 'spray',
+        id,
+        version,
+        author,
+        selector,
+        path,
+      });
     }
   },
 );

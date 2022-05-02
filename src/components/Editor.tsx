@@ -5,9 +5,10 @@ import Overlay from '~/components/Overlay';
 import Selector from '~/components/Selector';
 import SprayEditor from '~/components/SprayEditor';
 import { Context } from '~/components/ContextProvider';
+import { sendToBackground } from '~/communication';
 
+import type { Points, Selector as SelectorType } from '~/types.d';
 import type { SelectorMode } from '~/components/Selector';
-import type { Points } from '~/components/SprayEditor';
 
 const Editor: React.FunctionComponent = () => {
   const { active } = useContext(Context);
@@ -20,9 +21,12 @@ const Editor: React.FunctionComponent = () => {
   }, []);
 
   const save = useCallback(
-    (selector: string) => {
-      // @TODO
-      console.log(path, selector);
+    async (selector: SelectorType) => {
+      await sendToBackground({
+        type: 'content-script/save',
+        selector,
+        path,
+      });
     },
     [path],
   );

@@ -36,15 +36,12 @@ describe('Storage', () => {
         '00202ac873c800c3a67653cf93f9256ab4785e50ebd3691e46f14506bb6259206ced',
       author:
         '9dd0b1e0f33f582887c6e268d9f3a61c666a56ab230731946ec41e2bd7531ef6',
-      type: 'image',
-      target: ['.some', '.selector'],
-      arguments: {
-        imagePath: 'https://...',
-        link: undefined,
-      },
-      transform: {
-        rotation: 23,
-      },
+      mode: 'spray',
+      path: [
+        [22, 22, 0.5],
+        [50, 100, 0.5],
+      ],
+      target: '.some > .selector',
     };
 
     storage.set(url, id, graffiti);
@@ -58,14 +55,13 @@ describe('Storage', () => {
         '0020a15933b4e69111aa25c32fdf44c63b0c05110dd0ccff18837d55bfe2f2e7666f',
       author:
         'ac2ba676c388c3c7144d1d8099d2a0d21aa5845fd2dcfb40ea1d225cebe6f797',
-      type: 'text',
-      target: ['.another', '.selector', '.depth'],
-      arguments: {
-        link: 'https://test.de',
-      },
-      transform: {
-        rotation: 0,
-      },
+      mode: 'music',
+      path: [
+        [100, 50, 0.5],
+        [150, 50, 0.5],
+        [200, 150, 0.5],
+      ],
+      target: '.another > .selector >.depth',
     };
 
     storage.set(anotherUrl, anotherId, anotherGraffiti);

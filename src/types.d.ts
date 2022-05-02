@@ -1,38 +1,32 @@
-export type VariantImage = {
-  type: 'image';
-  arguments: {
-    imagePath: string;
-    link?: string;
-  };
+export type Points = number[][];
+
+export type Selector = string;
+
+export type VariantSpray = {
+  mode: 'spray';
 };
 
-export type VariantText = {
-  type: 'text';
-  arguments: {
-    link?: string;
-  };
-};
-
-export type GraffitiTransform = {
-  transform: {
-    rotation: number;
-  };
+export type VariantMusic = {
+  mode: 'music';
 };
 
 export type GraffitiBase = {
   id: Identifier;
   version: string;
   author: string;
-  target: string[];
+  selector: Selector;
+  path: Points;
 };
 
-type GraffitiVariants = VariantImage | VariantText;
+type GraffitiVariants = VariantSpray | VariantMusic;
 
 export type Graffiti = GraffitiBase & GraffitiTransform & GraffitiVariants;
 
 export type Identifier = string;
 
 export type Url = string;
+
+// Popup Messages
 
 export type PopupMessage = PopupState | PopupOpen;
 
@@ -45,6 +39,8 @@ export type PopupOpen = {
   type: 'popup/open';
 };
 
+// Background Messages
+
 export type BackgroundMessage = BackgroundState;
 
 export type State = {
@@ -56,9 +52,12 @@ export type BackgroundState = {
   type: 'background/state';
 } & State;
 
-export type ContentScriptMessage = Test;
+// Content Script Messages
 
-// @TODO
-export type Test = {
-  type: 'content-script/test';
+export type ContentScriptMessage = Save;
+
+export type Save = {
+  type: 'content-script/save';
+  selector: Selector;
+  path: Points;
 };

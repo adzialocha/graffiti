@@ -12,6 +12,8 @@ import debounce from 'debounce';
 import Spraycan from '~/components/Spraycan';
 import { Context } from '~/components/ContextProvider';
 
+import type { Selector as SelectorType } from '~/types.d';
+
 const DEBOUNCE_WAIT = 25; // ms
 
 // If a clicked target is too close to the top or right side of the page, the
@@ -128,7 +130,7 @@ const SelectorToolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
 type SelectorProps = {
   children?: React.ReactNode;
   onSelect: (mode: SelectorMode) => void;
-  onSave: (selector: string) => void;
+  onSave: (selector: SelectorType) => void;
   mode: SelectorMode;
   enableSave: boolean;
 };
@@ -173,21 +175,11 @@ const Selector = ({
       return;
     }
 
-    const selector = getCssSelector(target, {
-      // @TODO: Find good values
-      //
-      // Use high values to disable optimizations, we actually want the full
-      // and not shortened one to keep the knowledge about "where" the
-      // element sits.
-      //
-      // seedMinLength: 100,
-      // optimizedMinLength: 100,
-      // threshold: 250,
-      // maxNumberOfTries: 1000,
-    });
-
+    // Calculate path to element in DOM
+    const selector = getCssSelector(target);
     onSave(selector);
 
+    // Reset everything afterwards
     reset();
   }, [target, onSave, reset]);
 
