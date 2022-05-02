@@ -51,7 +51,7 @@ const selectorToolbarStyles = css`
   width: 150px;
 `;
 
-type SelectorMode = 'spray' | 'music' | undefined;
+export type SelectorMode = 'spray' | 'music' | undefined;
 
 type ToolbarProps = {
   // Show toolbar underneath target
@@ -63,6 +63,9 @@ type ToolbarProps = {
   // Show toolbar left of target
   left: boolean;
 
+  // Enable save button
+  enableSave: boolean;
+
   // Callback for mode selection
   onSelect: (mode: SelectorMode) => void;
 
@@ -71,10 +74,16 @@ type ToolbarProps = {
 
   // Reset selected target
   onReset: () => void;
+
+  // Save current work
+  onSave: () => void;
 };
 
 const SelectorToolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
-  ({ onReset, onSelect, mode, left, bottom, inside }, ref) => {
+  (
+    { onReset, onSelect, onSave, enableSave, mode, left, bottom, inside },
+    ref,
+  ) => {
     // Move toolbar when element is too close to the border of the page
     const positionX = left ? 'right: 100%;' : null;
     let positionY = 'top: -30px;';
@@ -107,6 +116,9 @@ const SelectorToolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
         <button disabled={mode === 'music'} onClick={onMusic}>
           Music
         </button>
+        <button disabled={!mode || !enableSave} onClick={onSave}>
+          Save
+        </button>
         <button onClick={onReset}>Return</button>
       </div>
     );
@@ -116,10 +128,18 @@ const SelectorToolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
 type SelectorProps = {
   children?: React.ReactNode;
   onSelect: (mode: SelectorMode) => void;
+  onSave: (selector: string) => void;
   mode: SelectorMode;
+  enableSave: boolean;
 };
 
-const Selector = ({ children, onSelect, mode }: SelectorProps) => {
+const Selector = ({
+  children,
+  onSelect,
+  onSave,
+  enableSave,
+  mode,
+}: SelectorProps) => {
   const { target, active, setState } = useContext(Context);
   const toolbarRef = useRef<HTMLDivElement>(null);
   const [coordinates, setCoordinates] = useState({
@@ -147,6 +167,29 @@ const Selector = ({ children, onSelect, mode }: SelectorProps) => {
       height: 0,
     });
   }, [setState, onSelect]);
+
+  const save = useCallback(() => {
+    if (!target) {
+      return;
+    }
+
+    const selector = getCssSelector(target, {
+      // @TODO: Find good values
+      //
+      // Use high values to disable optimizations, we actually want the full
+      // and not shortened one to keep the knowledge about "where" the
+      // element sits.
+      //
+      // seedMinLength: 100,
+      // optimizedMinLength: 100,
+      // threshold: 250,
+      // maxNumberOfTries: 1000,
+    });
+
+    onSave(selector);
+
+    reset();
+  }, [target, onSave, reset]);
 
   const recalculate = useCallback(() => {
     // Always update scroll position
@@ -229,21 +272,6 @@ const Selector = ({ children, onSelect, mode }: SelectorProps) => {
       setState({
         target: newTarget,
       });
-
-      const selector = getCssSelector(newTarget, {
-        // @TODO: Find good values
-        //
-        // Use high values to disable optimizations, we actually want the full
-        // and not shortened one to keep the knowledge about "where" the
-        // element sits.
-        //
-        // seedMinLength: 100,
-        // optimizedMinLength: 100,
-        // threshold: 250,
-        // maxNumberOfTries: 1000,
-      });
-
-      console.log(selector);
     };
 
     const debouncedOnResize = debounce(onResize, DEBOUNCE_WAIT);
@@ -284,6 +312,8 @@ const Selector = ({ children, onSelect, mode }: SelectorProps) => {
           ref={toolbarRef}
           onReset={reset}
           onSelect={onSelect}
+          onSave={save}
+          enableSave={enableSave}
           mode={mode}
           bottom={coordinates.y < TOOLBAR_THRESHOLD}
           inside={coordinates.height > TOOLBAR_THRESHOLD}

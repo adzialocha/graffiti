@@ -1,8 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getStroke } from 'perfect-freehand';
 import { css } from '@emotion/react';
 
-function getSvgPathFromStroke(stroke: number[][]) {
+export type Points = number[][];
+
+type Props = {
+  onChange: (points: Points) => void;
+};
+
+function getSvgPathFromStroke(stroke: Points) {
   if (!stroke.length) {
     return '';
   }
@@ -21,8 +27,12 @@ function getSvgPathFromStroke(stroke: number[][]) {
   return d.join(' ');
 }
 
-const SprayEditor = () => {
-  const [points, setPoints] = useState<number[][]>([]);
+const SprayEditor = ({ onChange }: Props) => {
+  const [points, setPoints] = useState<Points>([]);
+
+  useEffect(() => {
+    onChange(points);
+  }, [points, onChange]);
 
   function handlePointerDown(event: React.PointerEvent) {
     const target = event.target as HTMLElement;
