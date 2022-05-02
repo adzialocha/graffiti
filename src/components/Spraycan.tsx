@@ -4,8 +4,8 @@ import { css } from '@emotion/react';
 
 const spraycanStyles = css`
   position: absolute;
-  width: 15rem;
-  left: 70%;
+  width: 15em;
+  left: 2em%;
 `;
 
 const Spraycan: React.FunctionComponent = () => {

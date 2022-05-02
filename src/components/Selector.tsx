@@ -149,6 +149,15 @@ const Selector = ({ children, onSelect, mode }: SelectorProps) => {
   }, [setState, onSelect]);
 
   const recalculate = useCallback(() => {
+    // Always update scroll position
+    setScrollPosition(() => {
+      return {
+        x: window.scrollX,
+        y: window.scrollY,
+      };
+    });
+
+    // Update selector box when we have a target
     if (!target) {
       return;
     }
@@ -161,13 +170,6 @@ const Selector = ({ children, onSelect, mode }: SelectorProps) => {
         y,
         width,
         height,
-      };
-    });
-
-    setScrollPosition(() => {
-      return {
-        x: window.scrollX,
-        y: window.scrollY,
       };
     });
   }, [target]);
@@ -201,10 +203,6 @@ const Selector = ({ children, onSelect, mode }: SelectorProps) => {
     };
 
     const onScroll = () => {
-      if (!target) {
-        return;
-      }
-
       recalculate();
     };
 
