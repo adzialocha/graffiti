@@ -120,7 +120,7 @@ type SelectorProps = {
 };
 
 const Selector = ({ children, onSelect, mode }: SelectorProps) => {
-  const { target, setState } = useContext(Context);
+  const { target, active, setState } = useContext(Context);
   const toolbarRef = useRef<HTMLDivElement>(null);
   const [coordinates, setCoordinates] = useState({
     x: 0,
@@ -173,6 +173,14 @@ const Selector = ({ children, onSelect, mode }: SelectorProps) => {
       };
     });
   }, [target]);
+
+  useEffect(() => {
+    // Calculate scroll position when we activated browser extension. We might
+    // start further down on the page ..
+    if (active) {
+      recalculate();
+    }
+  }, [active, recalculate]);
 
   useEffect(() => {
     const onMouseMove = (event: Event) => {
@@ -257,20 +265,20 @@ const Selector = ({ children, onSelect, mode }: SelectorProps) => {
   }, [target, recalculate, setState, reset]);
 
   // Set true when selector is larger than zero
-  const active = coordinates.width && coordinates.height;
+  const selectorActive = coordinates.width && coordinates.height;
 
   return (
     <div
       css={css`
         ${selectorStyles}
-        display: ${active ? 'block' : 'none'};
+        display: ${selectorActive ? 'block' : 'none'};
         left: ${scrollPosition.x + coordinates.x}px;
         top: ${scrollPosition.y + coordinates.y}px;
         width: ${coordinates.width}px;
         height: ${coordinates.height}px;
       `}
     >
-      {active && !mode && <Spraycan />}
+      {selectorActive && !mode && <Spraycan />}
       {target ? (
         <SelectorToolbar
           ref={toolbarRef}
